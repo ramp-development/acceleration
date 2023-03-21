@@ -1,3 +1,4 @@
+import { initCopyURL } from '$utils/initCopyURL';
 import { initSplide } from '$utils/initSplide';
 
 import { resources } from './pages/resources';
@@ -17,9 +18,9 @@ window.Webflow.push(() => {
       break;
   }
 
-  // const hasCombine = document.querySelector('[r-combine-el="wrapper"]');
-  // if (hasCombine) initCombine();
-
   const hasSplide = document.querySelector('.splide');
   if (hasSplide) initSplide();
+
+  const hasCopyURL = document.querySelector('[data-copy-url]');
+  if (hasCopyURL) initCopyURL();
 });

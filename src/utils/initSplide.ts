@@ -1,7 +1,7 @@
 import { createElement } from './createElement';
 
 export const initSplide = () => {
-  const tag = createElement('script', document.head, {
+  createElement('script', document.head, {
     src: 'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js',
     callback: init,
   });
