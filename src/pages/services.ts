@@ -29,16 +29,16 @@ export const services = () => {
 
     const mm = gsap.matchMedia();
     mm.add('(min-width: 768px)', () => {
-      const headerTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: header,
-          start: `top ${top}`,
-          end: `bottom ${top}`,
-          scrub: true,
-        },
-      });
+      // const headerTl = gsap.timeline({
+      //   scrollTrigger: {
+      //     trigger: header,
+      //     start: `top ${top}`,
+      //     end: `bottom ${top}`,
+      //     scrub: true,
+      //   },
+      // });
 
-      headerTl.to(targets, { opacity: 0.15, duration: 1 });
+      // headerTl.to(targets, { opacity: 0.15, duration: 1 });
 
       items.forEach((item, index) => {
         const timeline = gsap.timeline({
@@ -46,14 +46,14 @@ export const services = () => {
             trigger: item,
             start: 'top 50%',
             end: 'bottom 50%',
-            scrub: true,
+            scrub: 1,
           },
         });
 
         const target = targets.find((target) => target.classList.contains(`is-${index + 1}`));
 
         timeline.to(target, { opacity: 1, duration: 1 });
-        timeline.to(target, { opacity: 0.15, duration: 1 }, '<2');
+        // timeline.to(target, { opacity: 0.15, duration: 1 }, '<2');
       });
     });
   }
