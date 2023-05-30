@@ -1,7 +1,8 @@
 import { simulateEvent } from '@finsweet/ts-utils';
 
-export const careers = () => {
-  console.log('careers');
+export const modals = () => {
+  console.log('modals');
+
   const modalButtons = [...document.querySelectorAll('[data-modal-button]')];
   const modalTriggers = [...document.querySelectorAll('[data-modal-trigger]')];
 
