@@ -10,6 +10,7 @@ export const initSplide = () => {
     const sliders = [...document.querySelectorAll('.splide')];
     sliders.forEach((slider) => {
       const component = new Splide(slider, {
+        type: 'loop',
         gap: '2.5rem',
         perPage: 3,
         perMove: 1,
