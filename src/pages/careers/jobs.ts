@@ -54,7 +54,7 @@ export const jobs = () => {
 
         // Create the new filters and append the to the parent wrapper
         for (const propertyValue of propertyValues) {
-          const newFilter = createFilter(propertyValue, filterTemplateElement);
+          const newFilter = createFilter(propertyValue as keyof Job, filterTemplateElement);
           if (!newFilter) continue;
 
           filtersWrapper.append(newFilter);
