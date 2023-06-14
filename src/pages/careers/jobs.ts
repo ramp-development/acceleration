@@ -1,5 +1,5 @@
-import type { CMSFilters } from './types/CMSFilters';
-import type { Job } from './types/job';
+import type { CMSFilters } from '../../types/CMSFilters';
+import type { Job } from './job';
 
 export const jobs = () => {
   console.log('jobs');

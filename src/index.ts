@@ -1,12 +1,14 @@
 import { initCopyURL } from '$utils/initCopyURL';
 import { initSplide } from '$utils/initSplide';
 
+import { localisation } from './localisation';
 import { pages } from './pages';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('index');
 
+  localisation();
   pages();
 
   const hasSplide = document.querySelector('.splide');

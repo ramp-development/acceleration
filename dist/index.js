@@ -5,11 +5,11 @@
 
   // src/utils/initCopyURL.ts
   var initCopyURL = () => {
-    const URL = window.location.href;
+    const URL2 = window.location.href;
     const copyURLs = [...document.querySelectorAll("[data-copy-url]")];
     copyURLs.forEach((copyURL) => {
       copyURL.addEventListener("click", () => {
-        navigator.clipboard.writeText(URL);
+        navigator.clipboard.writeText(URL2);
       });
     });
   };
@@ -69,6 +69,193 @@
         });
         component.mount();
       });
+    }
+  };
+
+  // src/localisation/cases/handleMarketParamter.ts
+  var handleMarketParameter = (value) => {
+    const urlObject = new URL(window.location.href);
+    urlObject.searchParams.set("market", value);
+    history.pushState({}, "", urlObject.toString());
+    sessionStorage.setItem("market", value);
+  };
+
+  // src/localisation/utils/placeElementAt.ts
+  var placeElementAt = (parent, element, index) => {
+    index = Math.max(0, Math.min(index, parent.children.length));
+    if (index === parent.children.length) {
+      parent.appendChild(element);
+    } else {
+      parent.insertBefore(element, parent.children[index]);
+      const newIndex = [...parent.childNodes].indexOf(element);
+      if (newIndex !== index) {
+        parent.insertBefore(element, parent.children[index]);
+      }
+    }
+  };
+
+  // src/localisation/cases/handleMarketPriority.ts
+  var handleMarketPriority = (market, elements) => {
+    elements.forEach((element) => {
+      const { priorityIn } = element.dataset;
+      if (priorityIn === market) {
+        const { priorityOrder } = element.dataset;
+        const parent = element.parentElement;
+        if (!priorityOrder || !parent)
+          return;
+        placeElementAt(parent, element, Number(priorityOrder) - 1);
+      }
+    });
+  };
+
+  // src/localisation/utils/fetchMarketContent.ts
+  var fetchMarketContent = (link) => {
+    return fetch(link).then((response) => response.text()).then((html) => {
+      const parser = new DOMParser();
+      return parser.parseFromString(html, "text/html");
+    });
+  };
+
+  // src/localisation/cases/handleMarketTargets.ts
+  var handleMarketTargets = (market, elements) => {
+    const targetElementValues = elements.map((target) => target.dataset.targetFor);
+    fetchMarketContent(market.link).then((doc) => {
+      const childElements = targetElementValues.map((targetElementValue) => {
+        const element = doc.querySelector(
+          `[data-child-for="${targetElementValue}"]`
+        );
+        return { parent: targetElementValue, element };
+      });
+      childElements.forEach(({ parent, element }) => {
+        const parentElement = document.querySelector(
+          `[data-target-for="${parent}"]`
+        );
+        if (parentElement && element) {
+          parentElement.replaceChildren(element);
+        }
+      });
+    }).catch((error) => console.error(error));
+  };
+
+  // src/localisation/utils/createElementPlaceholder.ts
+  var createElementPlaceholder = (element, market) => {
+    return document.createComment(`Placeholder for element with market: ${market}`);
+  };
+
+  // src/localisation/utils/removedElementsMap.ts
+  var removedElementsMap = {};
+
+  // src/localisation/cases/handleMarketVisibility.ts
+  var handleMarketVisibility = (market, elements, visible) => {
+    elements.forEach((element) => {
+      const { showIn } = element.dataset;
+      if (!showIn)
+        return;
+      if (showIn === "Global")
+        return;
+      if (showIn === market && removedElementsMap[market]) {
+        removedElementsMap[market].forEach(({ placeholder, element: element2 }) => {
+          placeholder.replaceWith(element2);
+        });
+        delete removedElementsMap[market];
+      } else if (showIn !== market) {
+        const placeholder = createElementPlaceholder(element, showIn);
+        element.replaceWith(placeholder);
+        if (!removedElementsMap[showIn])
+          removedElementsMap[showIn] = [];
+        const originalIndex = Array.from(element.parentElement?.children || []).indexOf(element);
+        removedElementsMap[showIn].push({ placeholder, element, originalIndex });
+      }
+    });
+  };
+
+  // src/localisation/utils/applyMarket.ts
+  var applyMarket = (marketSelect) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const marketParam = urlParams.get("market");
+    const market = marketParam ? marketParam : sessionStorage.getItem("market");
+    console.log(marketParam);
+    console.log(sessionStorage.getItem("market"));
+    console.log(market);
+    if (!market)
+      return;
+    const optionExists = Array.from(marketSelect.options).some((option) => option.value === market);
+    if (!optionExists)
+      return;
+    marketSelect.value = market;
+    marketSelect.dispatchEvent(new Event("change"));
+  };
+
+  // src/localisation/utils/queryElements.ts
+  var queryElements = (query, parent = document) => {
+    const elements = parent.querySelectorAll(query);
+    return elements.length ? [...elements] : [];
+  };
+
+  // src/localisation/index.ts
+  var localisation = () => {
+    const marketSelect = document.querySelector('[data-localise="market-select"]');
+    const marketList = document.querySelector('[data-localise="market-list"]');
+    const selectorLanguage = document.querySelector(
+      '[data-localise="selector-language"]'
+    );
+    const selectorIcons = queryElements('[data-localise="selector-icon"]');
+    if (!marketSelect || !marketList)
+      return;
+    if (!selectorLanguage || !selectorIcons.length)
+      return;
+    const marketLinks = queryElements('[data-localise="market-link"]', marketList);
+    const marketIcons = queryElements('[data-localise="market-icon"]', marketList);
+    const markets = marketLinks.filter((marketLink) => Boolean(marketLink.textContent)).map((marketLink, index) => ({
+      id: marketLink.textContent,
+      link: marketLink.href,
+      icon: marketIcons[index]
+    }));
+    const targetElements = queryElements("[data-target-for]");
+    const showInElements = queryElements("[data-show-in]");
+    const hideInElements = queryElements("[data-hide-in]");
+    const priorityInElements = queryElements(
+      "[data-priority-in][data-priority-order]"
+    );
+    const elements = {
+      targetElements,
+      showInElements,
+      priorityInElements,
+      hideInElements
+    };
+    marketSelect.addEventListener("change", (event) => {
+      const { value } = event.target;
+      const market = markets.find((market2) => market2.id === value);
+      if (!market)
+        return;
+      handleMarketParameter(market.id);
+      handleMarketTargets(market, elements.targetElements);
+      handleMarketVisibility(market.id, elements.showInElements, true);
+      handleMarketVisibility(market.id, elements.hideInElements, false);
+      handleMarketPriority(market.id, elements.priorityInElements);
+      selectorIcons.forEach((selectorIcon) => {
+        selectorIcon.src = market.icon.src;
+        selectorIcon.alt = market.icon.alt;
+      });
+    });
+    marketSelect.addEventListener("marketSelectReady", () => {
+      applyMarket(marketSelect);
+      handleMarketVisibility(marketSelect.value, elements.showInElements);
+      handleMarketPriority(marketSelect.value, elements.priorityInElements);
+    });
+    const numberOfMarkets = markets.length;
+    if (marketSelect.options.length === numberOfMarkets) {
+      const event = new Event("marketSelectReady");
+      marketSelect.dispatchEvent(event);
+    } else {
+      const observer = new MutationObserver((mutationsList, observer2) => {
+        if (marketSelect.options.length === markets.length) {
+          observer2.disconnect();
+          const event = new Event("marketSelectReady");
+          marketSelect.dispatchEvent(event);
+        }
+      });
+      observer.observe(marketSelect, { childList: true });
     }
   };
 
@@ -366,6 +553,7 @@
   window.Webflow ||= [];
   window.Webflow.push(() => {
     console.log("index");
+    localisation();
     pages();
     const hasSplide = document.querySelector(".splide");
     if (hasSplide)

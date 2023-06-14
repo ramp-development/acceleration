@@ -6,7 +6,11 @@
  * @returns the HTML element
  */
 
-export const createElement = (type, location, options = {}) => {
+export const createElement = (
+  type: string,
+  location: HTMLHeadElement | HTMLBodyElement,
+  options = {}
+) => {
   const element = document.createElement(type);
 
   Object.entries(options).forEach(([key, value]) => {
