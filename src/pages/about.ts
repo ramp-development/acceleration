@@ -1,3 +1,5 @@
+import { createElement } from '$utils/createElement';
+
 export const about = () => {
   console.log('about');
 
@@ -5,19 +7,15 @@ export const about = () => {
   const selects = document.querySelectorAll<HTMLSelectElement>('select');
   selects.forEach((select) => {
     const { mirrorValue } = select.dataset;
-    let mirrorTarget: HTMLHeadElement | null = null;
-    if (mirrorValue) {
-      mirrorTarget = document.querySelector<HTMLHeadElement>(
-        `[data-mirror-target="${mirrorValue}"]`
-      );
-    }
+    if (!mirrorValue) return;
+    const mirrorTarget = document.querySelector<HTMLHeadingElement>(
+      `[data-mirror-target="${mirrorValue}"]`
+    );
 
     select.addEventListener('change', (event) => {
-      if (mirrorTarget) {
-        let { value } = event.target as HTMLSelectElement;
-        if (value === '') value = event.target.dataset.mirrorDefault ?? '';
-        mirrorTarget.textContent = value;
-      }
+      let { value } = event.target as HTMLSelectElement;
+      if (value === '') value = event.target.dataset.mirrorDefault ?? '';
+      mirrorTarget.textContent = value;
       setTimeout(() => {
         window.scrollBy(0, 1);
         window.scrollBy(0, -1);
@@ -40,5 +38,10 @@ export const about = () => {
   marketsSet.forEach((market) => {
     const option = new Option(market, market);
     if (select) select.add(option);
+  });
+
+  createElement('script', document.head, {
+    src: 'https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1/cmsfilter.js',
+    async: true,
   });
 };
