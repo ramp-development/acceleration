@@ -9,10 +9,6 @@ export const applyMarket = (marketSelect: HTMLSelectElement): void => {
   const urlParams = new URLSearchParams(window.location.search);
   const marketParam = urlParams.get('market');
   const market = marketParam ? marketParam : sessionStorage.getItem('market');
-
-  console.log(marketParam);
-  console.log(sessionStorage.getItem('market'));
-  console.log(market);
   if (!market) return;
 
   // Check if the market exists in the select options

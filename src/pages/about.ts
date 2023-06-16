@@ -1,8 +1,6 @@
 import { createElement } from '$utils/createElement';
 
 export const about = () => {
-  console.log('about');
-
   // shift the page when a select is changed
   const selects = document.querySelectorAll<HTMLSelectElement>('select');
   selects.forEach((select) => {
