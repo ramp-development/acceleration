@@ -1,6 +1,10 @@
 /**
  * Converts an HTML element to a comment node that contains the market info
  */
-export const createElementPlaceholder = (element: HTMLElement, market: string): Comment => {
-  return document.createComment(`Placeholder for element for market: ${market}`);
+export const createElementPlaceholder = (
+  element: HTMLElement,
+  type: 'hiden' | 'shown' | 'prioritised',
+  market: string
+): Comment => {
+  return document.createComment(`* placeholder * element to be ${type} in ${market}`);
 };

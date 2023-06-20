@@ -5,10 +5,7 @@ export const language = (): void => {
   const languageSelect = document.querySelector<HTMLSelectElement>('[data-localise="language"]');
 
   // Stop execution if the language dropdown is not found
-  if (!languageSelect) {
-    console.log('Language dropdown not found');
-    return;
-  }
+  if (!languageSelect) return;
 
   // Create an array of languages to be added to the dropdown
   const languages: Language[] = [

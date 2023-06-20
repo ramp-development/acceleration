@@ -10,7 +10,7 @@ import { elementsMap } from '../utils/elementsMap';
  */
 export const showInMarket = (market: string, elements: HTMLDivElement[]): void => {
   elements.forEach((element) => {
-    const showInMarkets = element.dataset.showIn?.split(',') ?? [];
+    const showInMarkets = element.dataset.showIn?.split(', ') ?? [];
     if (!showInMarkets.length) return;
 
     showInMarkets.forEach((showIn) => {
@@ -21,13 +21,13 @@ export const showInMarket = (market: string, elements: HTMLDivElement[]): void =
       // otherwise remove and store them
       if (showIn === market && elementsMap.showElementsMap[market]) {
         // Replace all the placeholders with the original elements
-        elementsMap.showElementsMap[market].forEach(({ placeholder, element }) =>
+        elementsMap.showElementsMap[showIn].forEach(({ placeholder, element }) =>
           placeholder.replaceWith(element)
         );
-        delete elementsMap.showElementsMap[market];
-      } else if (showIn !== market && !elementsMap.showElementsMap[showIn]) {
+        delete elementsMap.showElementsMap[showIn];
+      } else if (showIn !== market) {
         // create a placeholder and replace the element to be removed with it
-        const placeholder = createElementPlaceholder(element, market);
+        const placeholder = createElementPlaceholder(element, 'shown', showIn);
         element.replaceWith(placeholder);
 
         // create a map entry for the market if it doesn't exist

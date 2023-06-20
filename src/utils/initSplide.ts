@@ -26,6 +26,10 @@ export const initSplide = () => {
         },
       });
       component.mount();
+
+      document.addEventListener('refreshSplide', () => {
+        component.refresh();
+      });
     });
   }
 };

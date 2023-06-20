@@ -16,12 +16,12 @@ export const handleMarketPriority = (market: string, elements: HTMLDivElement[])
 
     if (priorityIn === market) {
       // Get the order in which the element should be prioritized and the parent element
-      const { priorityOrder } = element.dataset;
       const parent = element.parentElement;
-      if (!priorityOrder || !parent) return;
+      if (!parent) return;
+      const priorityOrder = element.dataset.priorityOrder ?? '1';
 
       // Create a placeholder, clone and replace the element to be removed with it
-      const placeholder = createElementPlaceholder(element, priorityIn);
+      const placeholder = createElementPlaceholder(element, 'prioritised', priorityIn);
       const clone = element.cloneNode(true) as HTMLDivElement;
       element.replaceWith(placeholder);
 
@@ -42,4 +42,6 @@ export const handleMarketPriority = (market: string, elements: HTMLDivElement[])
       delete elementsMap.priorityElementsMap[priorityIn];
     }
   });
+
+  document.dispatchEvent(new CustomEvent('refreshSplide'));
 };

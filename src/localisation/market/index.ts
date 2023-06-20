@@ -40,9 +40,7 @@ export const market = () => {
   const hideInElements = queryElements<HTMLDivElement>('[data-hide-in]');
 
   // Get priorityIn elements
-  const priorityInElements = queryElements<HTMLDivElement>(
-    '[data-priority-in][data-priority-order]'
-  );
+  const priorityInElements = queryElements<HTMLDivElement>('[data-priority-in]');
 
   // Get linked selects
   const linkedSelects = queryElements<HTMLSelectElement>('[data-localise="linked-select"]');
@@ -80,7 +78,7 @@ export const market = () => {
     // Apply the market from the query parameter or local storage
     applyMarket(marketSelect);
 
-    // // Handling initial market-specific visibility of elements if necessary
+    // Handling initial market-specific visibility of elements if necessary
     const market = marketSelect.value;
     if (market === markets[0].id) {
       showInMarket(marketSelect.value, elements.showInElements);

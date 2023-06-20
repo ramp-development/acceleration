@@ -10,14 +10,15 @@ import { elementsMap } from '../utils/elementsMap';
  */
 export const hideInMarket = (market: string, elements: HTMLDivElement[]): void => {
   elements.forEach((element) => {
-    const hideInMarkets = element.dataset.hideIn?.split(',') ?? [];
+    const hideInMarkets = element.dataset.hideIn?.split(', ') ?? [];
     if (!hideInMarkets.length) return;
 
     hideInMarkets.forEach((hideIn) => {
       if (hideIn === '') return;
+
       if (hideIn === market) {
         // create a placeholder and replace the element to be removed with it
-        const placeholder = createElementPlaceholder(element, market);
+        const placeholder = createElementPlaceholder(element, 'hiden', hideIn);
         element.replaceWith(placeholder);
 
         // create a map entry for the market if it doesn't exist
@@ -31,7 +32,7 @@ export const hideInMarket = (market: string, elements: HTMLDivElement[]): void =
         elementsMap.hideElementsMap[hideIn].forEach(({ placeholder, element }) =>
           placeholder.replaceWith(element)
         );
-        delete elementsMap.hideElementsMap[market];
+        delete elementsMap.hideElementsMap[hideIn];
       }
     });
   });
