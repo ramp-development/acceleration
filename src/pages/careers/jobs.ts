@@ -97,7 +97,8 @@ export const jobs = () => {
       })
       .then((data) => {
         const combinedList = data.reduce((acc, curr) => acc.concat(curr.requisitions), []);
-        return combinedList;
+        const filteredList = combinedList.filter((job: Job) => job.distribution);
+        return filteredList;
       })
       .catch((error) => {
         console.error(error);

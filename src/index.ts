@@ -6,8 +6,8 @@ import { pages } from './pages';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  localisation();
   pages();
+  localisation();
 
   const hasSplide = document.querySelector('.splide');
   if (hasSplide) initSplide();

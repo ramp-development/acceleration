@@ -4,4 +4,5 @@ export interface Job {
   location: string;
   category: string;
   detailLink: string;
+  distribution: boolean;
 }
