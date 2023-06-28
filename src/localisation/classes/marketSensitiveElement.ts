@@ -78,7 +78,7 @@ export class MarketSensitiveElement {
 
   // Private method to determine if the element is shown in a given market
   private showInMarket(market: string) {
-    if (this.showIn.includes('Global')) return;
+    if (this.showIn.includes('Global') && !this.element.dataset.override) return;
     const shouldShow = this.showIn.includes(market);
     if (shouldShow && !this.isVisible) {
       this.showElement();

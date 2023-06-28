@@ -14,6 +14,7 @@ export const localisation = (): void => {
   const attr = 'data-localise';
   // const switcherLangs = queryElements<HTMLDivElement>(`[${attr}="switcher-lang"]`);
   const switcherIcons = queryElements<HTMLImageElement>(`[${attr}="switcher-icon"]`);
+  const switcherMarkets = queryElements<HTMLImageElement>(`[${attr}="switcher-market"]`);
   const marketWrapper = queryElement<HTMLDivElement>(`[${attr}="market-wrapper"]`);
   const marketSelect = queryElement<HTMLSelectElement>(`[${attr}="market-select"]`, marketWrapper);
   const marketList = queryElement<HTMLDivElement>(`[${attr}="market-list"]`);
@@ -97,10 +98,10 @@ export const localisation = (): void => {
       handleMarketSensitiveElements(market, marketSensitiveElements);
       handleMirrorElements(market.id, mirrorElements);
 
-      switcherIcons.forEach((selectorIcon) => {
-        // selectorIcon.src = market.icon.src;
-        // selectorIcon.alt = market.icon.alt;
-        selectorIcon.textContent = market.icon.textContent;
+      switcherIcons.forEach((switcherIcon, index) => {
+        switcherIcon.src = market.icon.src;
+        switcherIcon.alt = market.icon.alt;
+        switcherMarkets[index].textContent = market.id;
       });
     });
 
