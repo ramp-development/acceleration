@@ -2,7 +2,6 @@ import type { Market } from '../type';
 import { createElementPlaceholder } from '../utils/createElementPlaceholder';
 import { fetchMarketContent } from '../utils/fetchMarketContent';
 import { placeElementAt } from '../utils/placeElementAt';
-import { shiftPage } from '../utils/shiftPage';
 
 export class MarketSensitiveElement {
   private element: HTMLElement;
@@ -100,16 +99,18 @@ export class MarketSensitiveElement {
 
   // Private method to prioritise the element in a given market
   private prioritiseInMarket(market: string) {
-    if (!this.priorityOrder) return;
-
     const shouldPrioritise = this.priorityIn === market;
     if (shouldPrioritise) {
       const { parentElement } = this.element;
       if (!parentElement) return;
-
       this.clone = this.element.cloneNode(true) as HTMLElement;
       this.element.replaceWith(this.placeholder);
-      placeElementAt(parentElement, this.clone, this.priorityOrder - 1);
+
+      if (this.priorityOrder) {
+        placeElementAt(parentElement, this.clone, this.priorityOrder - 1);
+      } else {
+        parentElement.prepend(this.clone);
+      }
     } else {
       this.clone.remove();
       this.placeholder.replaceWith(this.element);
@@ -124,6 +125,5 @@ export class MarketSensitiveElement {
     if (this.showIn.length > 0) this.showInMarket(market.id);
     if (this.hideIn.length > 0) this.hideInMarket(market.id);
     if (this.priorityIn) this.prioritiseInMarket(market.id);
-    shiftPage();
   }
 }

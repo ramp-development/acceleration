@@ -77,7 +77,9 @@ export const localisation = (): void => {
   // Get all elements that are market-sensitive
   const marketSensitiveElements = queryElements<HTMLDivElement>(
     '[data-target-for], [data-show-in], [data-hide-in], [data-priority-in]'
-  ).map((element) => new MarketSensitiveElement(element as HTMLElement));
+  )
+    .map((element) => new MarketSensitiveElement(element as HTMLElement))
+    .reverse();
 
   // Get mirror elements
   const mirrorElements = queryElements<HTMLDivElement>('[data-localise="mirror-market"]');
@@ -96,8 +98,9 @@ export const localisation = (): void => {
       handleMirrorElements(market.id, mirrorElements);
 
       switcherIcons.forEach((selectorIcon) => {
-        selectorIcon.src = market.icon.src;
-        selectorIcon.alt = market.icon.alt;
+        // selectorIcon.src = market.icon.src;
+        // selectorIcon.alt = market.icon.alt;
+        selectorIcon.textContent = market.icon.textContent;
       });
     });
 
