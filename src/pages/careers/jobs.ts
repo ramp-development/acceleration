@@ -97,7 +97,9 @@ export const jobs = () => {
       })
       .then((data) => {
         const combinedList = data.reduce((acc, curr) => acc.concat(curr.requisitions), []);
-        const filteredList = combinedList.filter((job: Job) => job.distribution);
+        const filteredList = combinedList.filter(
+          (job: Job) => job.distribution && job.postingType === 'External'
+        );
         return filteredList;
       })
       .catch((error) => {

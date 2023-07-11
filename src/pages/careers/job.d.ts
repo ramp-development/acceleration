@@ -5,4 +5,5 @@ export interface Job {
   category: string;
   detailLink: string;
   distribution: boolean;
+  postingType: 'Internal' | 'External';
 }
