@@ -1,4 +1,4 @@
-import { restartWebflow } from '@finsweet/ts-utils';
+// import { restartWebflow } from '@finsweet/ts-utils';
 
 import type { MarketSensitiveElement } from '../classes/marketSensitiveElement';
 import type { Market } from '../type';
@@ -10,6 +10,6 @@ export const handleMarketSensitiveElements = (
 ) => {
   elements.forEach((element) => element.updateVisibilityForMarket(market));
 
-  restartWebflow();
+  // restartWebflow();
   shiftPage();
 };

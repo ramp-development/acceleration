@@ -4,33 +4,32 @@ import { fetchMarketContent } from '../utils/fetchMarketContent';
 import { placeElementAt } from '../utils/placeElementAt';
 
 export class MarketSensitiveElement {
-  private element: HTMLElement;
-  private targetFor: string[];
-  private showIn: string[];
-  private hideIn: string[];
+  public element: HTMLElement;
+  private targetFor: string[] = [];
+  private showIn: string[] = [];
+  private hideIn: string[] = [];
   private priorityIn: string | null;
   private priorityOrder: number | null;
   private isVisible: boolean;
   private placeholder: Comment;
   private clone: HTMLElement;
+  private parseDataAttribute(attribute: string): string[] {
+    const attr = this.element.dataset[attribute];
+    return attr ? attr.split(', ') : [];
+  }
 
   constructor(element: HTMLElement) {
     this.element = element;
 
-    const { targetFor } = this.element.dataset;
-    this.targetFor = targetFor ? targetFor.split(', ') : [];
-
-    const { showIn } = this.element.dataset;
-    this.showIn = showIn ? showIn.split(', ') : [];
-
-    const { hideIn } = this.element.dataset;
-    this.hideIn = hideIn ? hideIn.split(', ') : [];
+    this.targetFor = this.parseDataAttribute('targetFor');
+    this.showIn = this.parseDataAttribute('showIn');
+    this.hideIn = this.parseDataAttribute('hideIn');
 
     const { priorityIn } = this.element.dataset;
     this.priorityIn = priorityIn ?? null;
 
-    const priorityOrderAttr = this.element.getAttribute('data-priority-order');
-    this.priorityOrder = priorityOrderAttr ? Number(priorityOrderAttr) : null;
+    const priorityOrder = this.element.getAttribute('data-priority-order');
+    this.priorityOrder = priorityOrder ? Number(priorityOrder) : null;
 
     this.isVisible = true;
 
@@ -79,10 +78,13 @@ export class MarketSensitiveElement {
   // Private method to determine if the element is shown in a given market
   private showInMarket(market: string) {
     if (this.showIn.includes('Global') && !this.element.dataset.override) return;
+
     const shouldShow = this.showIn.includes(market);
     if (shouldShow && !this.isVisible) {
+      // console.log('showing');
       this.showElement();
     } else if (!shouldShow && this.isVisible) {
+      // console.log('hiding');
       this.hideElement();
     }
   }
@@ -99,21 +101,33 @@ export class MarketSensitiveElement {
 
   // Private method to prioritise the element in a given market
   private prioritiseInMarket(market: string) {
+    // Figure if the element should be prioritised in the given market
     const shouldPrioritise = this.priorityIn === market;
-    if (shouldPrioritise) {
+
+    if (shouldPrioritise && market !== 'Global') {
+      // Get the parent element of the element
       const { parentElement } = this.element;
       if (!parentElement) return;
-      this.clone = this.element.cloneNode(true) as HTMLElement;
-      this.element.replaceWith(this.placeholder);
 
+      // Hide the element if it isn't already
+      if (this.isVisible) this.hideElement();
+
+      // Either place the element at a given index or as the first child
       if (this.priorityOrder) {
         placeElementAt(parentElement, this.clone, this.priorityOrder - 1);
       } else {
         parentElement.prepend(this.clone);
       }
-    } else {
+      this.isVisible = false;
+    } else if (!shouldPrioritise) {
+      // Remove the clone and relpace the placeholder with the element
       this.clone.remove();
+      this.isVisible = true;
       this.placeholder.replaceWith(this.element);
+
+      // Run showIn and hideIn methods to determine visibility
+      if (this.showIn.length > 0) this.showInMarket(market);
+      if (this.hideIn.length > 0) this.hideInMarket(market);
     }
 
     document.dispatchEvent(new CustomEvent('refreshSplide'));
